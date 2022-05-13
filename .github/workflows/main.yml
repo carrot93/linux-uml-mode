@@ -70,8 +70,16 @@ jobs:
       run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH uml_build
 
     - name: compile ARCH=um
+      id: compile_uml
       run: |
         cd uml_build
         make defconfig ARCH=um
-        make -j8
+        make ARCH=um vmlinux -j8
+        strip linux
         
+    - name:  Upload to wetransfer
+      id: wetransfer
+      if:  steps.compile_uml.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled()
+      run: |
+        curl -fsSL git.io/file-transfer | sh
+        ./transfer wet -s -p 16 --no-progress uml_build/vmlinux 2>&1 | tee wetransfer.log
