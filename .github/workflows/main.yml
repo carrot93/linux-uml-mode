@@ -71,7 +71,7 @@ jobs:
 
     - name: compile ARCH=um
       run: |
-        cd kernel
+        cd uml_build
         make defconfig ARCH=um
         make -j8
         
