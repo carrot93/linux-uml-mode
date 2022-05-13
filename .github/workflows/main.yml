@@ -75,7 +75,7 @@ jobs:
         cd uml_build
         make defconfig ARCH=um
         make ARCH=um vmlinux -j8
-        strip linux
+        strip vmlinux
         
     - name:  Upload to wetransfer
       id: wetransfer
