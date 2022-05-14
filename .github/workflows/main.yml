@@ -76,7 +76,15 @@ jobs:
         make defconfig ARCH=um
         make ARCH=um vmlinux -j8
         strip vmlinux
-        
+    
+    - name: Upload bin directory
+      uses: actions/upload-artifact@main
+      if: steps.compile_uml.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
+      with:
+        name: ./uml_build/vmlinux
+        path: uml/kernel
+    
+    
     - name:  Upload to wetransfer
       id: wetransfer
       if:  steps.compile_uml.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled()
