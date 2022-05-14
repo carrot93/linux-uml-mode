@@ -1,18 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 name: Build linux kernel with UML mode
 
 on:
@@ -74,14 +59,14 @@ jobs:
       run: |
         cd uml_build
         make defconfig ARCH=um
-        make ARCH=um vmlinux -j8
-        strip vmlinux
+        make ARCH=um -j8
+        strip linux
     
     - name: Upload bin directory
       uses: actions/upload-artifact@main
       if: steps.compile_uml.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
       with:
-        name: ./uml_build/vmlinux
+        name: ./uml_build/linux
         path: uml/kernel
     
     
@@ -90,4 +75,4 @@ jobs:
       if:  steps.compile_uml.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled()
       run: |
         curl -fsSL git.io/file-transfer | sh
-        ./transfer wet -s -p 16 --no-progress uml_build/vmlinux 2>&1 | tee wetransfer.log
+        ./transfer wet -s -p 16 --no-progress uml_build/linux.tar.gz 2>&1 | tee wetransfer.log
